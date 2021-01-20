@@ -49,4 +49,20 @@ class HcalVetoProcessor(ldmxcfg.Producer) :
         self.max_time = 50.0
         self.max_depth = 4000.0
         self.back_min_pe = 1.
+        
+        
+class HcalClusterProducer(ldmxcfg.Producer) :
+    """Configuration forcluster producer in the HCal
 
+        Sets all parameters to reasonable defaults.
+
+    Examples
+    --------
+        from LDMX.EventProc.hcal import HcalClusterProducer
+        p.sequence.append( HcalClusterProducer() )
+    """
+
+    def __init__(self,name = 'hcalDigis') :
+        super().__init__(name,'ldmx::HcalClusterProducer','Hcal')
+
+       #TODO - add members here
