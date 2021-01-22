@@ -1,5 +1,5 @@
-#ifndef ClusterMaker_HH_
-#define ClusterMaker_HH_
+#ifndef ClusterMaker_H_
+#define ClusterMaker_H_
 
 #include "Event/HcalHit.h"
 
@@ -7,7 +7,7 @@
 #include <queue>
 #include <list>
 
-namespace mu2e {
+namespace ldmx {
 
 
     class ClusterMaker 
@@ -17,7 +17,7 @@ namespace mu2e {
              using HitVec  = std::vector<const HcalHit*>;
 
              ClusterMaker(const HcalHit*, double, double);  
-             
+
              void  makeCluster(std::vector<HitList>&);
              const HitList& clusterList() const {return clusterList_;}             
 
@@ -27,9 +27,10 @@ namespace mu2e {
              const HcalHit*       Seed_;
              double               seedTime_;
              HitList      clusterList_;
-             std::queue<int>      ToVisit_;
-             std::vector<bool>    isVisited_; 
+             std::queue<int>      ToVisit_;//TODO
+             std::vector<bool>    isVisited_; //TODO
              double               deltaTime_; 
+             double               ExpandCut_;
 
     };
 

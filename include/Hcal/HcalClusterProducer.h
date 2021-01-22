@@ -18,6 +18,14 @@
 #include "Framework/EventProcessor.h"
 #include "Tools/NoiseGenerator.h"
 #include "Framework/Parameters.h" 
+#include "Event/EventConstants.h"
+#include "Framework/Exception.h"
+#include "Framework/RandomNumberSeedService.h"
+
+//Hcal
+#include "Event/HcalHit.h"
+#include "Event/HcalCluster.h"
+#include "Hcal/ClusterMaker.h"
 
 namespace ldmx {
 
@@ -43,7 +51,11 @@ class HcalClusterProducer : public Producer {
   virtual void produce(Event& event);
  private:
 
-  bool                            verbose_{false};
+  bool       verbose_{false};
+  double     EminSeed_{0};
+  double     EnoiseCut_{0};
+  double     deltaTime_{0};
+  double     expandCut_{0};
  
 };
 
