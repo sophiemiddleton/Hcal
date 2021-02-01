@@ -6,13 +6,14 @@
 
 namespace ldmx {
 
-    ClusterMaker::ClusterMaker(const HcalHit* Seed, double deltaTime, double ExpandCut) : Seed_(Seed), seedTime_(Seed->getTime()),deltaTime_(deltaTime), ExpandCut_(ExpandCut) //TODO - isVisted
+    ClusterMaker::ClusterMaker(const HcalHit* Seed, double deltaTime, double ExpandCut) : Seed_(Seed), seedTime_(Seed->getTime()),deltaTime_(deltaTime), ExpandCut_(ExpandCut), ToVisit_(), isVisited_(0) 
     {}
 
     void ClusterMaker::makeCluster(std::vector<HitList>& idHitVec)  
     { 
         clusterList_.clear();            
         clusterList_.push_front(Seed_);
+
         // crystalToVisit_.push(Seed_->crystalID());  
 
         /*HitList& liste = idHitVec[crystalSeed_->crystalID()];//TODO
@@ -47,7 +48,8 @@ namespace ldmx {
 
         ToVisit_.pop();                 
         }*/
-        clusterList_.sort([](const HcalHit* lhs, const HcalHit* rhs) {return lhs->energyDep() > rhs->energyDep();});
+        clusterList_.sort([](const HcalHit* lhs, const HcalHit* rhs) {return lhs->getEnergy() > rhs->getEnergy();});
        } 
-
+       
+      
 }

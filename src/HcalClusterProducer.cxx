@@ -23,7 +23,8 @@ namespace ldmx {
     void HcalClusterProducer::produce(Event& event)
     {
         std::vector<HcalCluster> hcalClusters;
-        std::list<const HcalHit*> seedList, hitMap;
+        std::list<const HcalHit*> seedList;
+        std::vector<std::list<const HcalHit*>> clusterList, hitMap;
         std::vector< HcalHit > hcalHits = event.getCollection< HcalHit >("HcalHits");
         
 
@@ -33,13 +34,9 @@ namespace ldmx {
             if (hit.getEnergy() <  EnoiseCut_) continue;
             seedList.push_back(&hit);
         }
-        // Sort hits by energy:
+
         seedList.sort([](const HcalHit* a, const HcalHit* b) {return a->getEnergy() > b->getEnergy();});
       
-        double most_energetic = 0;
-        int seed_id = -1;
-        HcalHit seed;
-       
         while(!seedList.empty() ){
             const HcalHit* Seed = *seedList.begin();
             if (Seed->getEnergy() < EminSeed_) break;
@@ -51,8 +48,31 @@ namespace ldmx {
             for (const auto& hit: finder.clusterList()) seedList.remove(hit);
 
         }
+        for(auto const& cluster_list : clusterList) fillCluster(cluster_list, hcalClusters);
         
         event.add( "HcalClusters", hcalClusters );
+    }
+    void  HcalClusterProducer::fillCluster(std::list<const HcalHit*> cluster_list,std::vector<HcalCluster>& hcalClusters){
+        std::vector<HcalHit> caloHitsPtrVector;
+
+        double totalEnergy(0), xcl(0), ycl(0), zcl(0);
+        for(auto const& hit : cluster_list){
+                
+                totalEnergy    += hit->getEnergy();
+                //double x,y,z;
+                //hcalGeometry.getStripAbsolutePosition( id , x , y , z );
+                /*xcl += x*clusterPrt->energyDep();
+                ycl += y*clusterPrt->energyDep();
+                zcl += z*clusterPrt->energyDep();
+                //caloHitsPtrVector.push_back( art::Ptr<CaloHit>(CaloHitsHandle,idx) );*/
+                
+            }
+        HcalCluster cluster;
+        cluster.setEnergy(totalEnergy );
+        cluster.setCentroidXYZ(xcl,ycl,zcl);
+        /*cluster->setNHits(cluster->getHits().size());
+        cluster->addHits(cluster->getHits());*/
+        hcalClusters.push_back( cluster );
     }
 }
 DECLARE_PRODUCER_NS(ldmx, HcalClusterProducer);

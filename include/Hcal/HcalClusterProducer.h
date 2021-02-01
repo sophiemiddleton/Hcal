@@ -26,7 +26,7 @@
 #include "Event/HcalHit.h"
 #include "Event/HcalCluster.h"
 #include "Hcal/ClusterMaker.h"
-
+#include "DetDescr/HcalGeometry.h"
 namespace ldmx {
 
 /**
@@ -49,6 +49,7 @@ class HcalClusterProducer : public Producer {
   void configure(Parameters& parameters) final override;
             
   virtual void produce(Event& event);
+  void  fillCluster(std::list<const HcalHit*>,std::vector<HcalCluster>& clusters);
  private:
 
   bool       verbose_{false};
