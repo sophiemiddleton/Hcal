@@ -62,7 +62,11 @@ class HcalClusterProducer(ldmxcfg.Producer) :
         p.sequence.append( HcalClusterProducer() )
     """
 
-    def __init__(self,name = 'hcalDigis') :
+    def __init__(self,name = 'hcalClusters') :
         super().__init__(name,'ldmx::HcalClusterProducer','Hcal')
 
-       #TODO - add members here
+        self.EminSeed = 0.
+        self.EnoiseCut = 0.
+        self.EminCluster = 100.0 #MeV
+        self.cutOff = 10.
+    

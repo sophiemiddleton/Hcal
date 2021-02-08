@@ -53,11 +53,12 @@ class HcalClusterProducer : public Producer {
  private:
 
   bool       verbose_{false};
-  double     EminSeed_{0};
-  double     EnoiseCut_{0};
-  double     deltaTime_{0};
-  double     expandCut_{0};
+  double     EminSeed_{0.};
+  double     EnoiseCut_{0.};
+  //double     deltaTime_{0};
  
+  double     EminCluster_{0.};
+  double     cutOff_{0.};
 };
 
 }

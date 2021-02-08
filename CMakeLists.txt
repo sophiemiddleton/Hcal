@@ -14,7 +14,8 @@ find_package(ROOT CONFIG REQUIRED)
 
 setup_library(name Hcal
               dependencies ROOT::Physics 
-                           DARK::Framework DARK::Event DARK::Tools DARK::DetDescr 
+                           DARK::Framework DARK::Event DARK::Tools DARK::DetDescr DARK::Conditions
+                           ONNXRuntime::Interface
               python_install_path ${PYTHON_INSTALL_PREFIX}
 )
 
