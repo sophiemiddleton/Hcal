@@ -6,10 +6,9 @@
 
 namespace ldmx {
 
-    /*ClusterMaker::ClusterMaker(const HcalHit* Seed, double deltaTime, double ExpandCut) : Seed_(Seed), seedTime_(Seed->getTime()),deltaTime_(deltaTime), ExpandCut_(ExpandCut), ToVisit_(), isVisited_(0) 
-    {}*/
 
     std::vector<HcalCluster>  ClusterMaker::getClusters(){
+        std::cout<<"List of working cluster is of size : "<<working_.size()<<std::endl;
         return working_;
     }
     
@@ -18,7 +17,7 @@ namespace ldmx {
      }
             
     void ClusterMaker::addHits(const HcalHit* Seed){
-       
+        
         double hitE = Seed->getEnergy();
 
         double hitX, hitY, hitZ;
@@ -30,8 +29,9 @@ namespace ldmx {
         double newCentroidZ = (wf.getCentroidZ()*wf.getCentroidE() + hitE*hitZ) / newE;
 
         wf.setCentroidXYZE(newCentroidX, newCentroidY, newCentroidZ, newE);
-
+        std::cout<<"New centre: "<<newCentroidX<<" "<<newCentroidY<<" "<<newCentroidZ<<" "<<newE<<std::endl;
         wf.addHittoCluster(Seed); 
+        working_.push_back(wf);
     }
     
     void ClusterMaker::addCluster(const HcalCluster cluster) {
@@ -53,22 +53,49 @@ namespace ldmx {
         for (unsigned int i = 0; i < clusterHits.size(); i++) {
     
             wf.addHittoCluster(clusterHits[i]);
+        }
+        
     }
+    void ClusterMaker::add(HcalCluster &oldcluster, const HcalCluster cluster) {
+    
+        double clusterE  = cluster.getCentroidE() ;
+        double centroidX = cluster.getCentroidX() ;
+        double centroidY = cluster.getCentroidY() ;
+        double centroidZ = cluster.getCentroidZ() ;
+    
+        double newE = clusterE + oldcluster.getCentroidE();
+        double newCentroidX = (oldcluster.getCentroidX()*oldcluster.getCentroidE() + clusterE*centroidX) / newE;
+        double newCentroidY = (oldcluster.getCentroidY()*oldcluster.getCentroidE() + clusterE*centroidY) / newE;
+        double newCentroidZ = (oldcluster.getCentroidZ()*oldcluster.getCentroidE() + clusterE*centroidY) / newE;
+    
+        oldcluster.setCentroidXYZE(newCentroidX, newCentroidY, newCentroidZ, newE);
+
+        std::vector<const HcalHit*> clusterHits = cluster.getHits();
+    
+        for (unsigned int i = 0; i < clusterHits.size(); i++) {
+    
+            oldcluster.addHittoCluster(clusterHits[i]);
+        }
+        
     }
     
-    void ClusterMaker::makeClusterv2(double seed_threshold, double cutoff) {
+
+    
+    void ClusterMaker::makeCluster(double seed_threshold, double cutoff) {
+                std::cout<<"[makeCluster: starting...]"<<std::endl;
                 unsigned int ncluster = working_.size();
                 double minwgt = cutoff;
                 //Sort list of working clusters:
+                std::cout<<"[makeCluster: sorting...]"<<std::endl;
                 std::sort(working_.begin(), working_.end(), compClusters);
                 do {
                     bool any = false;
                     size_t mi(0),mj(0);
-   
+                    std::cout<<"[makeCluster: doing...]"<<std::endl;
                     int nseeds = 0;
                     // Loop over clusters
                     for (unsigned int i = 0; i < working_.size(); i++) {
-    
+                        std::cout<<"[makeCluster: sinside working loop...]"<<std::endl;
                         if (working_[i].empty()) continue;
 
                         bool passes_threshold = (working_[i].centroid().E() >= seed_threshold);
@@ -77,11 +104,11 @@ namespace ldmx {
                         } else {
                             break;
                         }
-
+                        std::cout<<"[makeCluster: passes threshold...]"<<std::endl;
                         for (unsigned int j = i + 1; j < working_.size(); j++) {
     
                             if (working_[j].empty() or (!passes_threshold and working_[j].getCentroidE() < seed_threshold)) continue;
-                            double wgt = 1;//wgt_(working_.clusters_[i],working_.clusters_[j]); //TODO - what does this do?
+                            double wgt = working_[i].getEnergy();//wgt_(working_.clusters_[i],working_.clusters_[j]); //TODO - what does this do?
                             if (!any or wgt < minwgt) {
                                 any = true;
                                 minwgt = wgt;
@@ -90,21 +117,22 @@ namespace ldmx {
                             }
                         }
                     }
-
+                    std::cout<<"[makeCluster: ending...]"<<std::endl;
                     nseeds_ = nseeds;
-                    transitionWeights_.insert(std::pair<int, double>(ncluster, minwgt));
+                    transitionWeights_.insert(std::pair<int, double>(ncluster, minwgt)); 
                     // combine clusters
                     if (any and minwgt < cutoff) {
                         // put the bigger one in mi
                         if (working_[mi].getCentroidE() < working_[mj].getCentroidE()) { std::swap(mi,mj); }
                         // now we have the smallest, merge
-                        //working_[mi].add(working_[mj]); //TODO check add functino works
-                        //working_[mj].clear(); //TODO
+                        this->add(working_[mi],working_[mj]);
+                        working_[mj].clear();
                         // decrement cluster count
                         ncluster--;
                     } 
-    
+        
                 } while (minwgt < cutoff and ncluster > 1);
+                std::cout<<"[makeCluster: updating final wgt...]"<<std::endl;
                 finalwgt_ = minwgt;
             } 
     //void ClusterMaker::makeCluster(std::vector<HitList>& idHitVec)  
