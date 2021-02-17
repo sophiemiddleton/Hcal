@@ -43,6 +43,7 @@ void HcalOldDigiProducer::configure(framework::config::Parameters& parameters) {
 }
 
 ldmx::HcalID HcalOldDigiProducer::generateRandomID(ldmx::HcalID::HcalSection sec) {
+  std::cout<<"[HcalOldDigiProducer::begiinning]"<<std::endl;
   int layer, strip;
   ldmx::HcalID::HcalSection section = sec;
   if (sec == ldmx::HcalID::BACK) {
