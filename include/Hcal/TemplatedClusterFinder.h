@@ -24,23 +24,6 @@ namespace hcal {
                 clusters_.push_back(WorkingCluster(eh, hex));
             }
             
-            void add(WorkingCluster &w,  double x, double y, double z, double e, int id, const ldmx::HcalGeometry& hex) {
-                std::cout<<"[Template::strip poisition...]"<<x<<" "<<y<<" "<<z<<std::endl;
-                double hitE = e;
-
-                double hitX, hitY, hitZ;
-                
-                hex.getStripAbsolutePosition( id , hitX , hitY , hitZ );
-
-                double newE = hitE + w.centroid().E();
-                double newCentroidX = (w.centroid().Px()*w.centroid().E() + hitE*hitX) / newE;
-                double newCentroidY = (w.centroid().Py()*w.centroid().E() + hitE*hitY) / newE;
-                double newCentroidZ = (w.centroid().Pz()*w.centroid().E() + hitE*hitZ) / newE;
-                std::cout<<"has new Center : "<<newCentroidX<<" "<<newCentroidY<<" "<<newCentroidZ<<std::endl;
-                w.SetCentroidPxPyPzE(newCentroidX, newCentroidY, newCentroidZ, newE);
-
-                 
-            }
     
 
             static bool compClusters(const WorkingCluster& a, const WorkingCluster& b) {

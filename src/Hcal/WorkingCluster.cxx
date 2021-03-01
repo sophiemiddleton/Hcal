@@ -15,14 +15,17 @@ namespace hcal {
 
         double hitX, hitY, hitZ;
         std::cout<<"[WorkingCluster::hit poisition...]"<<eh->getXPos()<<" "<<eh->getYPos()<<" "<<eh->getZPos()<<std::endl;
-        hex.getStripAbsolutePosition( eh->getID() , hitX , hitY , hitZ );
-        std::cout<<"[WorkingCluster::strip poisition...]"<<hitX<<" "<<hitY<<" "<<hitZ<<std::endl;
+        //hex.getStripAbsolutePosition( eh->getID() , hitX , hitY , hitZ );
+        //std::cout<<"[WorkingCluster::strip poisition...]"<<hitX<<" "<<hitY<<" "<<hitZ<<std::endl;
+        hitX = eh->getXPos();
+        hitY = eh->getYPos();
+        hitZ = eh->getZPos();
         double newE = hitE + centroid_.E();
         double newCentroidX = (centroid_.Px()*centroid_.E() + hitE*hitX) / newE;
         double newCentroidY = (centroid_.Py()*centroid_.E() + hitE*hitY) / newE;
         double newCentroidZ = (centroid_.Pz()*centroid_.E() + hitE*hitZ) / newE;
         std::cout<<"has new Center : "<<newCentroidX<<" "<<newCentroidY<<" "<<newCentroidZ<<std::endl;
-        centroid_.SetPxPyPzE(eh->getXPos(), newCentroidY, newCentroidZ, newE);
+        centroid_.SetPxPyPzE(newCentroidX, newCentroidY, newCentroidZ, newE);
 
         hits_.push_back(eh); 
     }

@@ -27,7 +27,7 @@ namespace hcal {
 
     void HcalClusterProducer::produce(framework::Event& event)
     {
-        std::cout<<"[HcalClusterProducer::beginning...]"<<std::endl;
+        
         const ldmx::HcalGeometry& hcalGeom = getCondition<ldmx::HcalGeometry>(ldmx::HcalGeometry::CONDITIONS_OBJECT_NAME);
         
         TemplatedClusterFinder<MyClusterWeight> finder;
@@ -69,9 +69,9 @@ namespace hcal {
 
         }*/
         finder.cluster(EminCluster_,cutOff_);
-        std::cout<<"[HcalClusterProducer::produce cluster made...]"<<std::endl;
+        //std::cout<<"[HcalClusterProducer::produce cluster made...]"<<std::endl;
         std::vector<WorkingCluster> wcVec = finder.getClusters();
-        std::cout<<"[HcalClusterProducer::produce ending...]"<<std::endl;
+        //std::cout<<"[HcalClusterProducer::produce ending...]"<<std::endl;
         for (unsigned int c = 0; c < wcVec.size(); c++) {
     
             ldmx::HcalCluster cluster;
@@ -80,12 +80,12 @@ namespace hcal {
             cluster.setCentroidXYZ(wcVec[c].centroid().Px(), wcVec[c].centroid().Py(), wcVec[c].centroid().Pz());
             cluster.setNHits(wcVec[c].getHits().size());
             cluster.addHits(wcVec[c].getHits());
-            std::cout<<"[HcalClusterProducer::setting the cluster parameters...]"<<std::endl;
+            //std::cout<<"[HcalClusterProducer::setting the cluster parameters...]"<<std::endl;
             hcalClusters.push_back( cluster );
         }
-        std::cout<<"[HcalClusterProducer::produce adding to event...]"<<std::endl;
+        //std::cout<<"[HcalClusterProducer::produce adding to event...]"<<std::endl;
         event.add( "HcalClusters", hcalClusters );
-        std::cout<<"[HcalClusterProducer::produce added...]"<<std::endl;
+        //std::cout<<"[HcalClusterProducer::produce added...]"<<std::endl;
     }
    
 }
